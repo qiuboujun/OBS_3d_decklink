@@ -13,6 +13,15 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          fetch-tags: true
+
+      - name: Fetch OBS tags
+        shell: pwsh
+        run: |
+          if (-not (git remote | Select-String -SimpleMatch "upstream")) {
+            git remote add upstream https://github.com/obsproject/obs-studio.git
+          }
+          git fetch --tags upstream
 
       - name: Build OBS (x64)
         uses: ./.github/actions/build-obs
