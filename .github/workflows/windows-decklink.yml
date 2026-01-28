@@ -15,6 +15,12 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Sync submodules
+        shell: pwsh
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --force --recursive
+
       - name: Fetch OBS tags
         shell: pwsh
         run: |
