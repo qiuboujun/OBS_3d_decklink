@@ -41,6 +41,26 @@ jobs:
             }
           }
 
+      - name: Ensure obs-browser
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "plugins/obs-browser/CMakeLists.txt")) {
+            if (Test-Path "plugins/obs-browser") {
+              Remove-Item -Recurse -Force "plugins/obs-browser"
+            }
+            git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/obsproject/obs-browser.git "plugins/obs-browser"
+          }
+
+      - name: Ensure obs-websocket
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "plugins/obs-websocket/CMakeLists.txt")) {
+            if (Test-Path "plugins/obs-websocket") {
+              Remove-Item -Recurse -Force "plugins/obs-websocket"
+            }
+            git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/obsproject/obs-websocket.git "plugins/obs-websocket"
+          }
+
       - name: Fetch OBS tags
         shell: pwsh
         run: |
