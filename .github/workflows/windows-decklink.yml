@@ -21,6 +21,16 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --force --recursive
 
+      - name: Ensure libdshowcapture
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "deps/libdshowcapture/src/dshowcapture.hpp")) {
+            if (Test-Path "deps/libdshowcapture/src") {
+              Remove-Item -Recurse -Force "deps/libdshowcapture/src"
+            }
+            git clone --depth 1 https://github.com/obsproject/libdshowcapture.git "deps/libdshowcapture/src"
+          }
+
       - name: Fetch OBS tags
         shell: pwsh
         run: |
