@@ -24,11 +24,21 @@ jobs:
       - name: Ensure libdshowcapture
         shell: pwsh
         run: |
-          if (-not (Test-Path "deps/libdshowcapture/src/dshowcapture.hpp")) {
+          $needClone = $false
+          if (-not (Test-Path "deps/libdshowcapture/src/dshowcapture.hpp")) { $needClone = $true }
+          if (-not (Test-Path "deps/libdshowcapture/src/external/capture-device-support/Library/EGAVResult.cpp")) { $needClone = $true }
+          if ($needClone) {
             if (Test-Path "deps/libdshowcapture/src") {
               Remove-Item -Recurse -Force "deps/libdshowcapture/src"
             }
-            git clone --depth 1 https://github.com/obsproject/libdshowcapture.git "deps/libdshowcapture/src"
+            git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/obsproject/libdshowcapture.git "deps/libdshowcapture/src"
+          }
+          if (Test-Path "deps/libdshowcapture/src/.git") {
+            git -C "deps/libdshowcapture/src" submodule update --init --recursive
+            if (Get-Command git-lfs -ErrorAction SilentlyContinue) {
+              git -C "deps/libdshowcapture/src" lfs install --local
+              git -C "deps/libdshowcapture/src" lfs pull
+            }
           }
 
       - name: Fetch OBS tags
