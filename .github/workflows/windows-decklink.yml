@@ -23,6 +23,16 @@ jobs:
           }
           git fetch --tags upstream
 
+      - name: Ensure version tag
+        shell: pwsh
+        run: |
+          $tag = git tag --points-at HEAD | Select-String -Pattern '^[0-9]+\.[0-9]+\.[0-9]+' | ForEach-Object { $_.Line } | Select-Object -First 1
+          if (-not $tag) {
+            $tag = git tag --list --sort=-v:refname | Select-String -Pattern '^[0-9]+\.[0-9]+\.[0-9]+' | ForEach-Object { $_.Line } | Select-Object -First 1
+            if (-not $tag) { $tag = '30.0.0' }
+            git tag -f $tag
+          }
+
       - name: Build OBS (x64)
         uses: ./.github/actions/build-obs
         with:
